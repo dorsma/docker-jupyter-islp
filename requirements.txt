@@ -1,0 +1,4 @@
+ISLP>=0.3.0
+# Additional data science packages that complement ISLP
+statsmodels>=0.14.0
+seaborn>=0.12.0
