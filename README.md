@@ -1,14 +1,22 @@
 # Jupyter Lab with ISLP
 
-A Docker image based on `jupyter/scipy-notebook` with ISLP (Introduction to Statistical Learning with Python) and related packages pre-installed.
+A Docker image based on `jupyter/scipy-notebook` optimized for the "An Introduction to Statistical Learning with Python" (ISLP) curriculum. 
+
+This image comes pre-loaded with the [ISLP_labs](https://github.com/intro-stat-learning/ISLP_labs) and matches their **frozen environment** requirements to ensure all book exercises run perfectly.
 
 ## What's Included
 
-- JupyterLab (from base image)
-- Scientific Python stack: NumPy, Pandas, SciPy, scikit-learn (from base image)
-- **ISLP**: The companion package for "An Introduction to Statistical Learning"
-- statsmodels: Statistical modeling and econometrics
-- seaborn: Statistical data visualization
+The image includes the ISLP labs pre-installed in the `/home/jovyan/work/labs` directory and pins the following core dependencies:
+
+* **Data Science:** `numpy==1.26.4`, `scipy==1.11.4`, `pandas==2.2.2`, `scikit-learn==1.5.0`
+* **Deep Learning:** `torch==2.3.0`, `torchvision==0.18.0`, `pytorch-lightning==2.2.5`, `torchinfo==1.8.0`, `torchmetrics==1.4.0.post0`
+* **Stats & Modeling:** `ISLP==0.4.0`, `statsmodels==0.14.2`, `lifelines==0.28.0`, `pygam==0.9.1`, `l0bnb==1.0.0`
+
+## Project Structure
+
+Inside the container, the workspace is organized as follows:
+* `/home/jovyan/work/labs`: **Read-only** lab notebooks included in the image.
+* `/home/jovyan/work/my-notebooks`: Your personal workspace (recommended mount point for persistence).
 
 ## Quick Start
 
@@ -20,7 +28,7 @@ docker pull dorsma/docker-jupyter-islp:latest
 ### Run Locally
 ```bash
 docker run -p 8888:8888 \
-  -v $(pwd)/notebooks:/home/jovyan/work \
+  -v $(pwd)/my-notebooks:/home/jovyan/work/my-notebooks \
   dorsma/docker-jupyter-islp:latest
 ```
 
@@ -32,7 +40,7 @@ Note this runs as your user id and group id to help prevent permission errors. S
 ```bash
 docker run -it --rm \
     -p ${PORT}:8888 \
-    -v $(pwd)/notebooks:/home/jovyan/work \
+    -v $(pwd)/my-notebooks:/home/jovyan/work/my-notebooks \
     --shm-size 8G \
     --user root \
     -e NB_UID=$OUR_UID \
@@ -60,15 +68,6 @@ cd docker-jupyter-islp
 scripts/build-local.sh
 ```
 
-## Environment Variables
-
-- `JUPYTER_TOKEN`: Set a custom token for authentication (default: auto-generated)
-- `JUPYTER_ENABLE_LAB`: Set to `yes` to use JupyterLab (default in base image)
-
-## Volumes
-
-- `/home/jovyan/work`: Mount your notebooks here for persistence
-
 ## Development Scripts
 
 This repository includes helper scripts to streamline the build and publish workflow:
@@ -81,8 +80,14 @@ This repository includes helper scripts to streamline the build and publish work
 | `scripts/run.sh` | Run Docker image | `./scripts/run.sh [tag]` |
 | `scripts/test-local.sh` |  Test ISLP lab notebooks to verify all dependencies work | `./scripts/test-local.sh` |
 
+## Environment Variables
+
+* `JUPYTER_TOKEN`: Set a custom token for authentication.
+* `JUPYTER_ENABLE_LAB`: Defaults to `yes`.
+* `NUMBA_CACHE_DIR`: Set to `/tmp/numba_cache` to ensure Numba can write cache files in read-only environments.
+
 ## Resources
 
-- [ISLP Documentation](https://intro-stat-learning.github.io/ISLP/)
-- [ISLP on PyPI](https://pypi.org/project/ISLP/)
-- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/)
+* [Official ISLP Book Site](https://www.statlearning.com/)
+* [ISLP Documentation](https://intro-stat-learning.github.io/ISLP/)
+* [ISLP_labs Source](https://github.com/intro-stat-learning/ISLP_labs)

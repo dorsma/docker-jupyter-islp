@@ -10,6 +10,7 @@ test_reports/
 # Jupyter
 .ipynb_checkpoints
 *.ipynb_checkpoints/
+my-notebooks/
 
 # Docker
 *.log

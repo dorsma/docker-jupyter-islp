@@ -10,7 +10,7 @@ PORT=8888
 
 SCRIPTS="$(dirname "$(realpath "${BASH_SOURCE-$0}")")"
 PROJ_HOME="$(dirname "$SCRIPTS")"
-LABS_DIR="$PROJ_HOME/tests/ISLP_labs"
+NOTEBOOKS_DIR="$PROJ_HOME/notebooks"
 
 OUR_UID=$(id -u)
 OUR_GID=$(id -g)
@@ -40,7 +40,7 @@ fi
 echo "Running ${IMAGE_NAME}:${VERSION} on port ${PORT}..."
 docker run -it --rm \
     -p ${PORT}:8888 \
-    -v $LABS_DIR:/home/jovyan/work \
+    -v $NOTEBOOKS_DIR:/home/jovyan/work/my-notebooks \
     --shm-size 8G \
     --user root \
     -e NB_UID=$OUR_UID \

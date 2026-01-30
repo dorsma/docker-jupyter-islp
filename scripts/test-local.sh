@@ -11,7 +11,6 @@ VERSION="local-build"
 
 SCRIPTS="$(dirname "$(realpath "${BASH_SOURCE-$0}")")"
 PROJ_HOME="$(dirname "$SCRIPTS")"
-LABS_DIR="$PROJ_HOME/tests/ISLP_labs"
 REPORTS_DIR="$PROJ_HOME/test_reports"
 
 OUR_UID=$(id -u)
@@ -25,15 +24,6 @@ if ! docker image inspect ${IMAGE_NAME}:${VERSION} >/dev/null 2>&1; then
     exit 1
 fi
 
-# Update submodule if it exists, clone if it doesn't
-if git submodule status "$LABS_DIR" | grep -q "^ "; then
-    echo "Submodule is initialized. Updating to latest remote head..."
-    git submodule update --remote --merge "$LABS_DIR"
-else
-    echo "Submodule not found or not initialized. Setting it up..."
-    git submodule update --init --recursive "$LABS_DIR"
-fi
-
 # Create reports directory
 mkdir -p $REPORTS_DIR
 
@@ -44,7 +34,6 @@ echo "Running pytest on all .ipynb files in ${IMAGE_NAME}:${VERSION}..."
 (
     set -x
     docker run --rm \
-        -v $LABS_DIR:/home/jovyan/labs \
         -v $REPORTS_DIR:/home/jovyan/reports \
         --shm-size 8G \
         --user root \
@@ -54,7 +43,7 @@ echo "Running pytest on all .ipynb files in ${IMAGE_NAME}:${VERSION}..."
         -e CHOWN_HOME_OPTS="-R" \
         -e NUMBA_CACHE_DIR=/tmp/numba_cache \
         "${IMAGE_NAME}:${VERSION}" \
-        bash -c "cd /home/jovyan/labs && ls -1 *.ipynb && pytest --nbmake *.ipynb --html=/home/jovyan/reports/test_report.html --self-contained-html"
+        bash -c "cd /home/jovyan/work/labs && ls -1 *.ipynb && pytest --nbmake *.ipynb --nbmake-timeout=1000 --html=/home/jovyan/reports/test_report.html --self-contained-html"
 )
 echo ""
 echo "✓ All notebooks executed successfully!"

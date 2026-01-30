@@ -1,32 +1,26 @@
-FROM quay.io/jupyter/pytorch-notebook:latest
+FROM quay.io/jupyter/minimal-notebook:python-3.12
 
-# Switch to root to install system packages if needed
-USER root
-
-# Install any system dependencies here if required
-# RUN apt-get update && apt-get install -y <package> && rm -rf /var/lib/apt/lists/*
-
-# Switch back to the notebook user
-USER ${NB_UID}
-
-# Copy requirements file
-COPY requirements.txt /tmp/requirements.txt
-
-# We're going to need setuptools
+# 1. Install system dependencies
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 USER ${NB_UID}
 
-# Install Python packages
-RUN pip install --no-cache-dir -r /tmp/requirements.txt --default-timeout=1000
+# 2. Copy and install Python requirements
+COPY --chown=${NB_UID}:${NB_GID} tests/ISLP_labs/requirements.txt /tmp/requirements.txt
+COPY --chown=${NB_UID}:${NB_GID} requirements-testing.txt /tmp/requirements-testing.txt
 
-# Set working directory
+RUN pip install --no-cache-dir \
+    -r /tmp/requirements.txt \
+    -r /tmp/requirements-testing.txt \
+    --default-timeout=1000
+
+# COPY labs 
 WORKDIR /home/jovyan/work
+COPY --chown=${NB_UID}:${NB_GID} tests/ISLP_labs/ /home/jovyan/work/labs/
 
-# Expose Jupyter port
+# EXPOSE and CMD are inherited from the base image, 
+# but keeping them for clarity.
 EXPOSE 8888
-
-# Default command (inherited from base image, but explicit here)
 CMD ["start-notebook.py"]
