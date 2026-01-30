@@ -47,7 +47,7 @@ Access at: `http://localhost:8888/?token=mysecrettoken`.
 Your notebooks will be saved in `$(pwd)/my-notebooks`
 
 * **NOTE:** This runs as your user id and group id to help prevent permission errors. See [Jupyter Docker Stacks Troubleshooting Common Problems](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/troubleshooting.html#permission-denied-when-mounting-volumes) for more info.
-* **NOTE (2):** This also uses ``--shm-size 8G` to avoid RuntimeError: unable to allocate shared memory(shm) errors. See [this thread](https://github.com/pytorch/pytorch/issues/2244#issuecomment-318864552) for more info.
+* **NOTE (2):** This also uses `--shm-size 8G` to avoid RuntimeError: unable to allocate shared memory(shm) errors. See [this thread](https://github.com/pytorch/pytorch/issues/2244#issuecomment-318864552) for more info.
 
 ## Running from Source with ISLP_labs notebooks
 Clone this repository, which includes the ISLP_labs notebooks as a git submodule. 
